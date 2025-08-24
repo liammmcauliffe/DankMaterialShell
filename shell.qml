@@ -16,6 +16,7 @@ import qs.Modules.Notifications.Popup
 import qs.Modules.ProcessList
 import qs.Modules.Settings
 import qs.Modules.TopBar
+import qs.Modules.LeftBar
 import qs.Modules.Dock
 import qs.Services
 import qs.Common
@@ -35,6 +36,14 @@ ShellRoot {
         model: SettingsData.getFilteredScreens("topBar")
 
         delegate: TopBar {
+            modelData: item
+        }
+    }
+
+    Variants {
+        model: SettingsData.getFilteredScreens("leftBar")
+
+        delegate: LeftBar {
             modelData: item
         }
     }

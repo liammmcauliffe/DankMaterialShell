@@ -15,10 +15,10 @@ PanelWindow {
     property var modelData
     property string screenName: modelData.name
     property real backgroundTransparency: SettingsData.topBarTransparency
-    property bool autoHide: false
-    property bool reveal: true
-    readonly property real effectiveBarWidth: Math.max(root.widgetWidth + SettingsData.topBarInnerPadding + 4, 60)
-    readonly property real widgetWidth: Math.max(40, 50 + SettingsData.topBarInnerPadding * 0.6)
+    property bool autoHide: SettingsData.topBarAutoHide
+    property bool reveal: SettingsData.topBarVisible && (!autoHide || leftBarMouseArea.containsMouse)
+    readonly property real effectiveBarWidth: Math.max(root.widgetWidth + SettingsData.topBarInnerPadding + 4, Theme.barHeight - 4 - (8 - SettingsData.topBarInnerPadding))
+    readonly property real widgetWidth: Math.max(20, 26 + SettingsData.topBarInnerPadding * 0.6)
 
     screen: modelData
     implicitWidth: effectiveBarWidth + SettingsData.topBarSpacing
@@ -45,6 +45,18 @@ PanelWindow {
             bottom: parent.bottom
         }
         hoverEnabled: true
+        
+        onEntered: {
+            if (root.autoHide) {
+                root.reveal = true
+            }
+        }
+        
+        onExited: {
+            if (root.autoHide) {
+                root.reveal = false
+            }
+        }
 
         Behavior on width {
             NumberAnimation {
@@ -155,6 +167,12 @@ PanelWindow {
     Connections {
         function onTopBarTransparencyChanged() {
             root.backgroundTransparency = SettingsData.topBarTransparency
+        }
+        function onTopBarAutoHideChanged() {
+            root.autoHide = SettingsData.topBarAutoHide
+        }
+        function onTopBarVisibleChanged() {
+            root.reveal = SettingsData.topBarVisible && (!root.autoHide || leftBarMouseArea.containsMouse)
         }
         target: SettingsData
     }
